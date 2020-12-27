@@ -1,0 +1,36 @@
+# 1주차 과제 (AND 검색)
+
+# 인자로 아무것도 들어오지 않았을 때
+if [ $# -eq 0 ]
+then
+    echo "Usage: phone searchfor [ ...searchfor]"
+    echo "(You didn't tell me what you want to search for.)"
+    exit 1 # 비정상적 종료
+fi
+
+# 인자가 있을 경우
+# null 문자열 string에 인자로 들어온 문자열을 하나씩 덧붙이되
+# 실습의 or 방식과는 다른 방식으로 덧붙여야 한다.
+# egrep "str1" mydata|egrep "str2"|...|egrep "strn"
+# egrep "str1" mydata 명령어로 찾아낸 mydata에서 str1이 포함된 부분을 pipe로
+# egrep "str2" 명령어의 입력으로 받아야 한다.
+# 이런 식으로 mydata에서 점점 범위를 좁혀 나가 str1, str2, ... strn이 모두 포함된 부분만 찾는다.
+
+string=
+for str in "$@"
+do
+  if [ -z "$string" ] # string이 null 문자열일 경우
+  then
+      string="egrep ${str} mydata"  # str(str1에 해당)을 포함한 부분을 mydata에서 찾아 낸다.
+  else
+      string="$string|egrep $str" # string에 해당하는 명령으로 찾아낸 부분을 입력으로(pipe) str을 찾아낸다.
+  fi
+done
+
+# 
+# echo $string
+# eval $string
+eval "$string|awk -f display.awk"
+# $string|awk -f display.awk
+
+exit 0  # 정상적 종료

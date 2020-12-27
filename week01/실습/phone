@@ -1,0 +1,30 @@
+# 1주차 실습 (OR 검색)
+
+# 인자가 하나도 없을 경우
+if [ $# -eq 0 ]
+then
+    echo "Usage: phone searchfor [...searchfor]"
+    echo "(You didn't tell me what you want to search for.)"
+    exit 1 # 비정상적 종료
+fi
+
+# 인자가 있을 경우
+# null 문자열 string에 인자로 들어온 문자열을 하나씩 덧붙인다.
+# str1|str2|str3|...|strn
+string=
+for str in "$@"
+do
+  if [ -z "$string" ] # string이 null 문자열일 경우(아무것도 덧붙이지 않은 경우)
+  then
+    string=$str # 첫 번째 인자를 string으로 한다.
+  else          # 이미 하나 이상의 인자가 덧붙여졌을 경우
+    string=$string\|$str  # 구분자 |와 함께 덧붙인다.
+  fi
+done
+
+# echo $string  # 문자열 string이 의도한대로 잘 만들어졌는지 확인
+
+# egrep로 검색해서 찾아낸 결과를 awk 명령어의 input으로 한다.(pipe)
+egrep -i "$string" mydata | awk -f display.awk
+
+exit 0 # 정상적 종료
